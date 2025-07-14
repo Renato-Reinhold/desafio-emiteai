@@ -3,12 +3,11 @@ package br.com.emiteai.backend.consumer;
 import br.com.emiteai.backend.model.Pessoa;
 import br.com.emiteai.backend.repository.PessoaRepository;
 import br.com.emiteai.backend.service.RelatorioStatusService;
-import br.com.emiteai.backend.service.AuditoriaServiceArquivo;
 import com.opencsv.CSVReader;
 import org.junit.jupiter.api.*;
 
 import java.io.FileReader;
-import java.util.Collections;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,16 +17,14 @@ class CsvConsumerTest {
 
     private PessoaRepository pessoaRepository;
     private RelatorioStatusService statusService;
-    private AuditoriaServiceArquivo auditoriaService;
     private CsvConsumer consumer;
 
     @BeforeEach
     void setup() {
         pessoaRepository = mock(PessoaRepository.class);
         statusService = new RelatorioStatusService();
-        auditoriaService = mock(AuditoriaServiceArquivo.class);
 
-        consumer = new CsvConsumer(pessoaRepository, statusService, auditoriaService);
+        consumer = new CsvConsumer(pessoaRepository, statusService);
     }
 
     @Test

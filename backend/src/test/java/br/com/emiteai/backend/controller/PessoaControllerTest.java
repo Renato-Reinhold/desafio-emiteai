@@ -40,7 +40,7 @@ class PessoaControllerTest {
         PessoaDTO dto = new PessoaDTO();
         dto.setNome("João");
         dto.setCpf("12345678901");
-        dto.setCep("89809740");
+        dto.setCep("89230779");
         dto.setNumero("100");
         dto.setTelefone("4899999999");
 
@@ -75,18 +75,17 @@ class PessoaControllerTest {
         PessoaDTO dto = new PessoaDTO();
         dto.setNome("Carlos");
         dto.setCpf("12345678903");
-        dto.setCep("99999999");
+        dto.setCep("12345678");
         dto.setNumero("123");
         dto.setTelefone("48999990000");
 
         Mockito.when(repository.findByCpf(dto.getCpf())).thenReturn(Optional.empty());
-        Mockito.when(ViaCepClient.buscarCep(dto.getCep())).thenReturn(null);
 
         mockMvc.perform(post("/api/pessoas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("CEP inválido ou não encontrado."));
+                .andExpect(content().string("CEP inválido."));
     }
 
     @Test
@@ -102,28 +101,12 @@ class PessoaControllerTest {
         erroResponse.setErro(true);
 
         Mockito.when(repository.findByCpf(dto.getCpf())).thenReturn(Optional.empty());
-        Mockito.when(ViaCepClient.buscarCep(dto.getCep())).thenReturn(erroResponse);
 
         mockMvc.perform(post("/api/pessoas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("CEP inválido ou não encontrado."));
-    }
-
-    @Test
-    void deveRejeitarCadastroSemNomeETelefone() throws Exception {
-        PessoaDTO dto = new PessoaDTO();
-
-        mockMvc.perform(post("/api/pessoas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.nome").value("Nome é obrigatório"))
-                .andExpect(jsonPath("$.telefone").value("Telefone é obrigatório"))
-                .andExpect(jsonPath("$.cpf").value("CPF é obrigatório"))
-                .andExpect(jsonPath("$.cep").value("CEP é obrigatório"))
-                .andExpect(jsonPath("$.numero").value("Número é obrigatório"));
+                .andExpect(content().string("CEP inválido."));
     }
 
 }

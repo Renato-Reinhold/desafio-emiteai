@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -32,7 +31,7 @@ public class PessoaController {
         }
 
         ViaCepResponse endereco = ViaCepClient.buscarCep(dto.getCep());
-        if (endereco.getErro() != null && endereco.getErro()) {
+        if (endereco == null || endereco.getErro() != null) {
             return ResponseEntity.badRequest().body("CEP inválido.");
         }
 
@@ -47,9 +46,9 @@ public class PessoaController {
         pessoa.setMunicipio(endereco.getMunicipio());
         pessoa.setEstado(endereco.getEstado());
 
-        Pessoa salva = repository.save(pessoa);
+        Pessoa save = repository.save(pessoa);
         auditoriaService.registrar("CADASTRO_PESSOA", "Pessoa cadastrada com CPF " + dto.getCpf());
-        return ResponseEntity.ok(salva);
+        return ResponseEntity.ok(save);
     }
 
 

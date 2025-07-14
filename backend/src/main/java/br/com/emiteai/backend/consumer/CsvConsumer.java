@@ -26,8 +26,8 @@ public class CsvConsumer {
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_RELATORIO)
     public void gerarCsv(String comando) {
-        List<Pessoa> pessoas = repository.findAll();
         try (CSVWriter writer = new CSVWriter(new FileWriter("relatorio.csv"))) {
+            List<Pessoa> pessoas = repository.findAll();
             writer.writeNext(new String[]{"Nome", "Telefone", "CPF", "CEP", "Número", "Complemento", "Bairro", "Município", "Estado"});
             for (Pessoa p : pessoas) {
                 writer.writeNext(new String[]{
@@ -43,8 +43,7 @@ public class CsvConsumer {
                 });
             }
             statusService.setStatus(RelatorioStatus.PRONTO);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             statusService.setErro("Erro ao gerar o relatório: " + e.getMessage());
         }
     }
