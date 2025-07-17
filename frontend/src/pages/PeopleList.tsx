@@ -29,7 +29,7 @@ interface Pessoa {
 }
 
 const fetchPessoas = async (): Promise<Pessoa[]> => {
-  const response = await axios.get("/api/pessoas"); // ajuste conforme a URL do seu backend
+  const response = await axios.get<Pessoa[]>("/api/pessoas");
   return response.data;
 };
 
@@ -59,7 +59,7 @@ export default function PeopleList() {
   };
 
   if (isLoading) return <CircularProgress />;
-  if (isError)
+  if (isError || !data)
     return <Typography color="error">Erro ao carregar dados.</Typography>;
 
   return (
@@ -88,7 +88,7 @@ export default function PeopleList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((pessoa) => (
+            {data.map((pessoa) => (
               <TableRow key={pessoa.id}>
                 <TableCell>{pessoa.nome}</TableCell>
                 <TableCell>{pessoa.telefone}</TableCell>
