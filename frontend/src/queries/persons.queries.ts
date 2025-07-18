@@ -1,14 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { UseMutationOptions, UseMutationResult, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
-
+import { API } from './axios.js';
 import type { Person } from '../types/person.js';
 
+/*
 const mock = new Map<string, Person>([
   ['12345678901', { name: 'John Doe', phone: '1234567890', cpf: '12345678901', address: { cep: '12345-678', numero: '100', complemento: 'Apt 1', bairro: 'Downtown', municipio: 'Cityville', estado: 'ST' } }],
   ['10987654321', { name: 'Jane Smith', phone: '0987654321', cpf: '10987654321', address: { cep: '87654-321', numero: '200', complemento: 'Suite 2', bairro: 'Uptown', municipio: 'Townsville', estado: 'TS' } }],
   ['11223344556', { name: 'Alice Johnson', phone: '1122334455', cpf: '11223344556', address: { cep: '11223-445', numero: '300', complemento: 'Unit 3', bairro: 'Suburbia', municipio: 'Villageville', estado: 'SV' } }],
   ['55667788990', { name: 'Bob Brown', phone: '5566778899', cpf: '55667788990', address: { cep: '55667-788', numero: '400', complemento: 'Floor 4', bairro: 'Countryside', municipio: 'Farmville', estado: 'CF' } }],
 ]);
+ */
 
 interface GetAllPersonsResponse {
   persons: Person[];
@@ -33,59 +35,41 @@ interface DeletePersonResponse {
 }
 
 async function fetchAllPersons(): Promise<GetAllPersonsResponse> {
-  // Simulate an API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ persons: Array.from(mock.values()) });
-    }, 1000);
-  });
+  const response = await API.get<GetAllPersonsResponse>('/pessoas');
+  if (response.status !== 200) {
+    throw new Error(`Error fetching Persons: ${response.statusText}`);
+  }
+
+  return response.data;
+
 }
 
-async function fetchPersonById(id: string): Promise<GetPersonByIdResponse> {
-  // Simulate an API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const person = mock.get(id)!;
-      resolve({ person });
-    }, 1000);
-  });
+async function fetchPersonById(id: number): Promise<GetPersonByIdResponse> {
+  const response = await API.get<GetPersonByIdResponse>(`/pessoas/${id}`);
+
+  if (response.status !== 200) {
+    throw new Error(`Error fetching Persons: ${response.statusText}`);
+  }
+
+  return response.data;
 }
 
-async function createPerson(person: Person): Promise<CreatePersonResponse> {
-  // Simulate an API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const id = person.cpf;
-      mock.set(id, person);
+async function createPerson(person: Omit<Person, 'id'>): Promise<CreatePersonResponse> {
+  const response = await API.post<CreatePersonResponse>('/pessoas', person);
 
-      resolve({ person, success: true });
-    }, 1000);
-  });
+  return response.data;
 }
 
-async function updatePerson(id: string, person: Person): Promise<UpdatePersonResponse> {
-  // Simulate an API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const existing = mock.get(id);
-      if (existing) {
-        mock.set(id, { ...existing, ...person });
-        resolve({ person: { ...existing, ...person }, success: true });
-      } else {
-        resolve({ success: false });
-      }
-    }, 1000);
-  });
+async function updatePerson(id: number, person: Omit<Person, 'id'>): Promise<UpdatePersonResponse> {
+  const response = await API.put<UpdatePersonResponse>(`/pessoas/${id}`, person);
+
+  return response.data;
 }
 
-async function deletePerson(id: string): Promise<DeletePersonResponse> {
-  // Simulate an API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      mock.delete(id);
-      resolve({ success: true });
-    }, 1000);
-  });
+async function deletePerson(id: number): Promise<DeletePersonResponse> {
+  const response = await API.delete<DeletePersonResponse>(`/pessoas/${id}`);
+
+  return response.data;
 }
 
 type UsePersonsQueryOptions = Omit<UseQueryOptions<GetAllPersonsResponse, Error>, 'queryKey' | 'queryFn'>;
@@ -100,7 +84,7 @@ function usePersonsQuery(options?: UsePersonsQueryOptions): UseQueryResult<GetAl
 
 type UsePersonQueryOptions = Omit<UseQueryOptions<GetPersonByIdResponse, Error>, 'queryKey' | 'queryFn'>;
 
-function usePersonQuery(id: string, options?: UsePersonQueryOptions): UseQueryResult<GetPersonByIdResponse, Error> {
+function usePersonQuery(id: number, options?: UsePersonQueryOptions): UseQueryResult<GetPersonByIdResponse, Error> {
   return useQuery({
     ...options,
     queryKey: ['person', id],
@@ -108,9 +92,9 @@ function usePersonQuery(id: string, options?: UsePersonQueryOptions): UseQueryRe
   });
 }
 
-type UseCreatePersonMutationOptions = Omit<UseMutationOptions<CreatePersonResponse, Error, Person>, 'mutationKey' | 'mutationFn'>;
+type UseCreatePersonMutationOptions = Omit<UseMutationOptions<CreatePersonResponse, Error, Omit<Person, 'id'>>, 'mutationKey' | 'mutationFn'>;
 
-function useCreatePersonMutation(options?: UseCreatePersonMutationOptions): UseMutationResult<CreatePersonResponse, Error, Person> {
+function useCreatePersonMutation(options?: UseCreatePersonMutationOptions): UseMutationResult<CreatePersonResponse, Error, Omit<Person, 'id'>> {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -127,9 +111,9 @@ function useCreatePersonMutation(options?: UseCreatePersonMutationOptions): UseM
   });
 }
 
-type UseUpdatePersonMutationOptions = Omit<UseMutationOptions<UpdatePersonResponse, Error, { id: string; person: Person }>, 'mutationKey' | 'mutationFn'>;
+type UseUpdatePersonMutationOptions = Omit<UseMutationOptions<UpdatePersonResponse, Error, { id: number; person: Omit<Person, 'id'> }>, 'mutationKey' | 'mutationFn'>;
 
-function useUpdatePersonMutation(options?: UseUpdatePersonMutationOptions): UseMutationResult<UpdatePersonResponse, Error, { id: string; person: Person }> {
+function useUpdatePersonMutation(options?: UseUpdatePersonMutationOptions): UseMutationResult<UpdatePersonResponse, Error, { id: number; person: Omit<Person, 'id'> }> {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -147,9 +131,9 @@ function useUpdatePersonMutation(options?: UseUpdatePersonMutationOptions): UseM
   });
 }
 
-type UseDeletePersonMutationOptions = Omit<UseMutationOptions<DeletePersonResponse, Error, string>, 'mutationKey' | 'mutationFn'>;
+type UseDeletePersonMutationOptions = Omit<UseMutationOptions<DeletePersonResponse, Error, number>, 'mutationKey' | 'mutationFn'>;
 
-function useDeletePersonMutation(options?: UseDeletePersonMutationOptions): UseMutationResult<DeletePersonResponse, Error, string> {
+function useDeletePersonMutation(options?: UseDeletePersonMutationOptions): UseMutationResult<DeletePersonResponse, Error, number> {
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -4,5 +4,6 @@ public enum RelatorioStatus {
     AGUARDANDO,
     EXECUTANDO,
     PRONTO,
+    ARQUIVO_GERADO,
     ERRO
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auditoria")
+@RequestMapping("/auditoria")
 public class AuditoriaController {
 
     private final AuditoriaRepository repository;

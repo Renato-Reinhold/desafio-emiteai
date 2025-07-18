@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 import type { Button } from '@mui/material';

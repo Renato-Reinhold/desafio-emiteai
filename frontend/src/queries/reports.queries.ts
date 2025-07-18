@@ -6,7 +6,7 @@ import type { UseMutationOptions, UseMutationResult } from '@tanstack/react-quer
 import { API } from './axios.js';
 
 async function requestReportGeneration(): Promise<void> {
-  const response = await API.post('/reports/generate');
+  const response = await API.post('/relatorio/csv');
 
   if (response.status !== 200) {
     throw new Error(`Error generating report: ${response.statusText}`);
@@ -21,7 +21,7 @@ function useRequestReportMutation(options?: UseMutationOptions<void, Error, void
 }
 
 async function downloadReport(): Promise<void> {
-  const response = await API.get('/reports/download', { responseType: 'blob' });
+  const response = await API.get('/relatorio/download', { responseType: 'blob' });
 
   if (response.status !== 200) {
     throw new Error(`Error downloading report: ${response.statusText}`);
@@ -43,7 +43,8 @@ function useDownloadReportMutation(options?: UseMutationOptions<void, Error, voi
 }
 
 interface SSEMessage {
-  event: 'connected' | 'report_completed';
+  status: string;
+  ultimaGeracao: string;
 }
 
 interface UseReportEventsOptions {
@@ -53,22 +54,29 @@ interface UseReportEventsOptions {
 function useReportEvents(options: UseReportEventsOptions): void {
   useEffect(() => {
     const api = API.getUri();
-    const sse = new EventSource(`${api}/reports/events`);
+    const sse = new EventSource(`${api}/relatorio/status`);
 
-    sse.onmessage = (event) => {
-      const data = JSON.parse(event.data) as SSEMessage;
+    const handleMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data) as SSEMessage;
 
-      if (data.event === 'report_completed') {
-        options.onReportCompleted();
+        if (data.status === 'PRONTO') {
+          options.onReportCompleted();
+        }
+      } catch (error) {
+        console.error(error);
       }
     };
 
+    sse.addEventListener("relatorio-status", handleMessage);
+
     sse.onerror = (error) => {
-      console.error('Error in SSE connection:', error);
+      console.error("Error in SSE connection:", error);
       sse.close();
     };
 
     return () => {
+      sse.removeEventListener("relatorio-status", handleMessage);
       sse.close();
     };
   }, [options]);

@@ -1,4 +1,4 @@
-import { Fragment, type ReactElement } from 'react';
+import React, { Fragment, type ReactElement } from 'react';
 
 import { Backdrop, Button, CircularProgress } from '@mui/material';
 import { Link, Outlet, useNavigate } from '@tanstack/react-router';
@@ -35,12 +35,12 @@ function Persons(): ReactElement {
     generateReportMutation.mutate();
   };
 
-  const onEditPerson = (cpf: string): void => {
-    navigate({ to: '/edit/$cpf', params: { cpf } });
+  const onEditPerson = (id: number): void => {
+    navigate({ to: '/edit/$id', params: { id: `${id}` } });
   };
 
-  const onDeletePerson = (cpf: string): void => {
-    deletePersonMutation.mutate(cpf);
+  const onDeletePerson = (id: number): void => {
+    deletePersonMutation.mutate(id);
   };
 
   const actions = [
@@ -53,13 +53,14 @@ function Persons(): ReactElement {
     <Button variant="contained" color="secondary" key="generate-report" onClick={onGenerateReport}>
       Gerar Relatório
     </Button>
+
   ];
 
   return (
     <Page>
-      <PageHeader title="Pessoa Física" actions={actions} />
+      <PageHeader title="Pessoa Física" actions={actions}/>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'relative' }}>
+      <div style={{display: 'flex', flexDirection: 'column', gap: 16, position: 'relative' }}>
         <PersonsList
           onEdit={onEditPerson}
           onDelete={onDeletePerson}
@@ -72,8 +73,8 @@ function Persons(): ReactElement {
 }
 
 interface PersonListProps {
-  onEdit?: (cpf: string) => void;
-  onDelete?: (cpf: string) => void;
+  onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
 function PersonsList(props: PersonListProps): ReactElement {
@@ -92,10 +93,10 @@ function PersonsList(props: PersonListProps): ReactElement {
       {
         (data?.persons ?? []).map((person) => (
           <PersonCard
-            key={person.cpf}
+            key={person.id}
             person={person}
-            onEdit={() => props.onEdit?.(person.cpf)}
-            onDelete={() => props.onDelete?.(person.cpf)}
+            onEdit={() => props.onEdit?.(person.id)}
+            onDelete={() => props.onDelete?.(person.id)}
           />
         ))
       }

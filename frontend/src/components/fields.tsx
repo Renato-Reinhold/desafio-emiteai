@@ -1,11 +1,17 @@
-import { forwardRef } from 'react';
-import type { ReactElement } from 'react';
+import React, { forwardRef } from "react";
+import type { ReactElement } from "react";
 
-import { CircularProgress, TextField } from '@mui/material';
-import type { TextFieldProps } from '@mui/material';
-import { Controller} from 'react-hook-form';
-import type { UseFormReturn, Path, FieldValues, ControllerRenderProps, ControllerFieldState } from 'react-hook-form';
-import { IMaskInput } from 'react-imask';
+import { CircularProgress, TextField } from "@mui/material";
+import type { TextFieldProps } from "@mui/material";
+import { Controller } from "react-hook-form";
+import type {
+  UseFormReturn,
+  Path,
+  FieldValues,
+  ControllerRenderProps,
+  ControllerFieldState,
+} from "react-hook-form";
+import { IMaskInput } from "react-imask";
 
 interface CustomTextFieldProps<T extends FieldValues> {
   disabled?: boolean;
@@ -16,13 +22,22 @@ interface CustomTextFieldProps<T extends FieldValues> {
   textFieldProps?: TextFieldProps;
 }
 
-function CustomTextField<T extends FieldValues>(props: CustomTextFieldProps<T>): ReactElement {
-  const { disabled, field, fieldState, label, loading = false, textFieldProps } = props;
+function CustomTextField<T extends FieldValues>(
+  props: CustomTextFieldProps<T>,
+): ReactElement {
+  const {
+    disabled,
+    field,
+    fieldState,
+    label,
+    loading = false,
+    textFieldProps,
+  } = props;
 
   const inputProps = {
     ...textFieldProps?.slotProps?.input,
     endAdornment: loading ? (
-        <CircularProgress color="inherit" size={20} />
+      <CircularProgress color="inherit" size={20} />
     ) : null,
     disabled: disabled || textFieldProps?.disabled,
   };
@@ -43,7 +58,7 @@ function CustomTextField<T extends FieldValues>(props: CustomTextFieldProps<T>):
       label={label}
       fullWidth
       error={!!fieldState.error}
-      helperText={fieldState.error ? fieldState.error.message : ''}
+      helperText={fieldState.error ? fieldState.error.message : ""}
       disabled={loading || textFieldProps?.disabled}
     />
   );
@@ -55,10 +70,15 @@ interface FormFieldProps<T extends FieldValues> {
   label: string;
   loading?: boolean;
   disabled?: boolean;
-  textFieldProps?: Omit<TextFieldProps, 'name' | 'label' | 'error' | 'helperText'>;
+  textFieldProps?: Omit<
+    TextFieldProps,
+    "name" | "label" | "error" | "helperText"
+  >;
 }
 
-function FormField<T extends FieldValues>(props: FormFieldProps<T>): ReactElement {
+function FormField<T extends FieldValues>(
+  props: FormFieldProps<T>,
+): ReactElement {
   return (
     <Controller
       name={props.name}
@@ -92,14 +112,18 @@ const CPFMask = forwardRef<HTMLInputElement, CustoMaskProps>(
         {...other}
         mask="000.000.000-00"
         inputRef={ref}
-        onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
+        onAccept={(value: any) =>
+          onChange({ target: { name: props.name, value } })
+        }
         overwrite
       />
     );
   },
 );
 
-function CPFFormField<T extends FieldValues>(props: FormFieldProps<T>): ReactElement {
+function CPFFormField<T extends FieldValues>(
+  props: FormFieldProps<T>,
+): ReactElement {
   return (
     <Controller
       name={props.name}
@@ -132,14 +156,18 @@ const CEPMask = forwardRef<HTMLInputElement, CustoMaskProps>(
         {...other}
         mask="00000-000"
         inputRef={ref}
-        onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
+        onAccept={(value: any) =>
+          onChange({ target: { name: props.name, value } })
+        }
         overwrite
       />
     );
   },
 );
 
-function CEPFormField<T extends FieldValues>(props: FormFieldProps<T>): ReactElement {
+function CEPFormField<T extends FieldValues>(
+  props: FormFieldProps<T>,
+): ReactElement {
   return (
     <Controller
       name={props.name}
@@ -158,7 +186,7 @@ function CEPFormField<T extends FieldValues>(props: FormFieldProps<T>): ReactEle
               },
               inputLabel: {
                 shrink: true, // Ensures the label is always visible
-              }
+              },
             },
           }}
         />
@@ -175,14 +203,18 @@ const PhoneMask = forwardRef<HTMLInputElement, CustoMaskProps>(
         {...other}
         mask="(00) 00000-0000"
         inputRef={ref}
-        onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
+        onAccept={(value: any) =>
+          onChange({ target: { name: props.name, value } })
+        }
         overwrite
       />
     );
   },
 );
 
-function PhoneFormField<T extends FieldValues>(props: FormFieldProps<T>): ReactElement {
+function PhoneFormField<T extends FieldValues>(
+  props: FormFieldProps<T>,
+): ReactElement {
   return (
     <Controller
       name={props.name}
@@ -198,8 +230,8 @@ function PhoneFormField<T extends FieldValues>(props: FormFieldProps<T>): ReactE
             slotProps: {
               input: {
                 inputComponent: PhoneMask as never,
-              }
-            }
+              },
+            },
           }}
         />
       )}
@@ -207,9 +239,4 @@ function PhoneFormField<T extends FieldValues>(props: FormFieldProps<T>): ReactE
   );
 }
 
-export {
-  CEPFormField,
-  CPFFormField,
-  FormField,
-  PhoneFormField
-}
+export { CEPFormField, CPFFormField, FormField, PhoneFormField };

@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["DOM", "ESNext"],
     "outDir": "./dist",
     "paths": {
       "@/*": ["./*"]
     },
     "baseUrl": "./src",
+    "skipLibCheck": true,
     "strict": true,
     "esModuleInterop": true,
     "jsx": "react"

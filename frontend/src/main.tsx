@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { routeTree } from './router.js';
 import { CssBaseline } from '@mui/material';
+import React from 'react';
 
 const container = document.getElementById('root');
 

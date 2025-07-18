@@ -1,29 +1,34 @@
-import { isValidCEP, isValidCPF, isValidLandlinePhone, isValidMobilePhone, isValidPhone } from '@brazilian-utils/brazilian-utils';
+import { isValidCEP, isValidCPF, isValidLandlinePhone, isValidMobilePhone, isValidPhone, onlyNumbers, } from '@brazilian-utils/brazilian-utils';
 
 import { z } from 'zod';
 
-interface Address {
+interface Person {
+  id: number;
+  nome: string;
+  telefone: string;
+  cpf: string;
   cep: string;
   numero: string;
   complemento?: string;
   bairro: string;
   municipio: string;
   estado: string;
-}
-
-interface Person {
-  name: string;
-  phone: string;
-  cpf: string;
-  address: Address;
 };
 
 const strParams = {
   error: 'Campo Obrigatório',
 };
 
-const addressSchema = z.object({
-  cep: z.string(strParams).min(1).refine((value: string) => isValidCEP(value), { error: 'CEP Inválido' }),
+const personSchema = z.object({
+  nome: z.string(strParams).min(1).max(255),
+  telefone: z.string(strParams).min(1)
+    .refine((value: string) => isValidPhone(value) || isValidLandlinePhone(value) || isValidMobilePhone(value), { error: 'Telefone Inválido' }),
+  cpf: z.string(strParams).min(1)
+    .refine((value: string) => isValidCPF(value), { error: 'CPF Inválido' })
+    .transform((value: string) => onlyNumbers(value)),
+  cep: z.string(strParams).min(1)
+    .refine((value: string) => isValidCEP(value), { error: 'CEP Inválido' })
+    .transform((value: string) => onlyNumbers(value)),
   numero: z.string(strParams).min(1),
   complemento: z.string().optional(),
   bairro: z.string(strParams).min(1),
@@ -31,19 +36,10 @@ const addressSchema = z.object({
   estado: z.string(strParams).min(1),
 });
 
-const personSchema = z.object({
-  name: z.string(strParams).min(1).max(255),
-  phone: z.string(strParams).min(1).refine((value: string) => isValidPhone(value) || isValidLandlinePhone(value) || isValidMobilePhone(value), { error: 'Telefone Inválido' }),
-  cpf: z.string(strParams).min(1).refine((value: string) => isValidCPF(value), { error: 'CPF Inválido' }),
-  address: addressSchema,
-});
-
 export type {
-  Address,
   Person,
 }
 
 export {
-  addressSchema,
   personSchema,
 };

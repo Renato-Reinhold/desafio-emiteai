@@ -21,7 +21,7 @@ const personsCreateRoute = createRoute({
 const personsEditRoute = createRoute({
   getParentRoute: () => personsRoute,
   component: PersonsUpdate,
-  path: '/edit/$cpf',
+  path: '/edit/$id',
 });
 
 export {

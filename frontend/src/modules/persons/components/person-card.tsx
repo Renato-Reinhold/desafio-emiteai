@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
 import {
   Phone as PhoneIcon,
@@ -6,8 +6,8 @@ import {
   Assignment as CpfIcon,
   type SvgIconComponent
 } from '@mui/icons-material';
-
 import { Avatar, Box, Button, Card, CardActions, CardContent, CardHeader, Divider, Typography } from '@mui/material';
+import { formatCEP, formatCPF } from '@brazilian-utils/brazilian-utils';
 
 import type { Person } from '../../../types/person';
 
@@ -15,10 +15,10 @@ function getInitials(name: string): string {
   return name.split(' ').map(name => name[0]).join('').toUpperCase();
 }
 
-function getFormattedAddress(address: Person['address']): string {
-  const { numero, municipio, estado, complemento, cep, bairro } = address;
+function getFormattedAddress(person: Person): string {
+  const { numero, municipio, estado, complemento, cep, bairro } = person;
 
-  return `${numero}${complemento ? ` ${complemento}` : ''}, ${bairro}, ${municipio} - ${estado}, ${cep}`;
+  return `${numero}${complemento ? ` ${complemento}` : ''}, ${bairro}, ${municipio} - ${estado}, ${formatCEP(cep)}`;
 }
 
 interface PersonCardProps {
@@ -36,12 +36,12 @@ function PersonCard(props: PersonCardProps): ReactElement {
         action={<Actions onEdit={props.onEdit} onDelete={props.onDelete} />}
         avatar={
           <Avatar sx={{ bgcolor: 'primary.main' }}>
-            {getInitials(person.name)}
+            {getInitials(person.nome)}
           </Avatar>
         }
         title={
           <Typography variant="h6" component="div">
-            {person.name}
+            {person.nome}
           </Typography>
         }
       />
@@ -50,9 +50,9 @@ function PersonCard(props: PersonCardProps): ReactElement {
 
       <CardContent>
         <Box sx={{ display: 'flex', gap: 2 }} flexWrap="wrap">
-          <Entry icon={CpfIcon} label="CPF" value={person.cpf} />
-          <Entry icon={PhoneIcon} label="Telefone" value={person.phone} />
-          <Entry icon={LocationIcon} label="Endereço" value={getFormattedAddress(person.address)} />
+          <Entry icon={CpfIcon} label="CPF" value={formatCPF(person.cpf)} />
+          <Entry icon={PhoneIcon} label="Telefone" value={person.telefone} />
+          <Entry icon={LocationIcon} label="Endereço" value={getFormattedAddress(person)} />
         </Box>
       </CardContent>
 

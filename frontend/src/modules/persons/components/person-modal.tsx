@@ -1,4 +1,4 @@
-import type { PropsWithChildren, ReactElement } from 'react';
+import React, { PropsWithChildren, ReactElement } from 'react';
 
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
@@ -20,15 +20,6 @@ function PersonModal<T>(props: PropsWithChildren<PersonModalProps<T>>): ReactEle
         {props.children}
       </DialogContent>
 
-      <DialogActions sx={{ pr: 3, py: 2 }} >
-        <Button onClick={props.onCancel} color="error" variant="outlined">
-          Cancelar
-        </Button>
-
-        <Button type="submit" color="primary" variant="outlined">
-          Salvar
-        </Button>
-      </DialogActions>
     </Dialog>
   )
 }
