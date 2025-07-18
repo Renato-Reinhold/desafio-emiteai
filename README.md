@@ -60,16 +60,12 @@ O projeto é containerizado com **Docker** e orquestrado com **Docker Compose**,
 
 Este projeto utiliza **Docker** e **Docker Compose** para facilitar a execução local de todos os serviços necessários.
 
----
-
 ## ✅ Pré-requisitos
 
 Certifique-se de ter instalado:
 
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
-
----
 
 ## 🛠️ Passos para execução
 
