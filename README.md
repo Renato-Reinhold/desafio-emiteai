@@ -72,8 +72,8 @@ Certifique-se de ter instalado:
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/seu-usuario/emiteai-teste-tecnico.git
-cd emiteai-teste-tecnico
+git clone https://github.com/Renato-Reinhold/desafio-emiteai.git
+cd desafio-emiteai
 ```
 
 2. **Inicie os containers com Docker Compose**
