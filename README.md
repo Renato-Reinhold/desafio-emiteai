@@ -56,37 +56,38 @@ O projeto é containerizado com **Docker** e orquestrado com **Docker Compose**,
 
 ---
 
-## 🌐 Configuração do Nginx
+# 🚀 Como executar o projeto
 
-O Nginx serve o frontend na porta `80` com a seguinte configuração:
+Este projeto utiliza **Docker** e **Docker Compose** para facilitar a execução local de todos os serviços necessários.
 
-```nginx
-server {
-    listen 80;
-    server_name localhost;
+---
 
-    location / {
-        root /usr/share/nginx/html;
-        index index.html;
-        try_files $uri $uri/ /index.html;
-    }
+## ✅ Pré-requisitos
 
-    location /api/ {
-        proxy_pass http://backend:8080/;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
+Certifique-se de ter instalado:
 
-    location /relatorio/status {
-        proxy_pass http://backend:8080;
-        proxy_set_header Connection '';
-        proxy_http_version 1.1;
-        chunked_transfer_encoding off;
-        proxy_buffering off;
-        proxy_cache off;
-        proxy_read_timeout 86400;
-    }
-}
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+---
+
+## 🛠️ Passos para execução
+
+1. **Clone o repositório:**
+
+```bash
+git clone https://github.com/seu-usuario/emiteai-teste-tecnico.git
+cd emiteai-teste-tecnico
+```
+
+2. **Inicie os containers com Docker Compose**
+```bash
+docker-compose up --build
+```
+3. **Acesse a aplicação**
+
+Frontend (interface web):
+👉 http://localhost
+
+Swagger (documentação da API):
+👉 http://localhost/api/swagger-ui/index.html
